@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>File Consumer</title>
+    <!-- TODO: We should find a way without using axios. XmlHttpRequest should work i think. -->
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script>
+        function sendFile(e) {
+            console.log('send File', document.getElementById("fileInput").files[0]);
+            var fileToUpload = document.getElementById("fileInput").files[0];
+            var testObjJson = new Blob([
+                JSON.stringify({
+                    a: 'root',
+                    b: 'root',
+                    c: 'root'
+                })
+            ],
+                { type: 'application/json' }
+            );
+            var formData = new FormData();
+            formData.append("file", fileToUpload);
+            formData.append("testObjJson", testObjJson);
+            window.axios({
+                url: 'http://localhost:8080/uploadFile',
+                method: 'post',
+                config: {
+                    headers: {
+                        'Content-Type': 'multipart/form-data'
+                    }
+                },
+                data: formData
+            }).then(res => {
+                console.log('res', res);
+            })
+
+        }
+    </script>
+</head>
+
+<body>
+    <div>
+        <form id="upload" name="upload" onsubmit="return false">
+            <input id="fileInput" type="file" accept="image/png, image/jpeg" />
+            <button type="submit" onClick="sendFile()">Upload</button>
+        </form>
+    </div>
+</body>
+
+</html>
